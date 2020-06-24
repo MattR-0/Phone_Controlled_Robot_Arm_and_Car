@@ -4,7 +4,7 @@ Contents: <br />
 Master <br />
   Final arduino code <br />
   Final app inventor code <br />
-Milestone2 <br />
+Milestone-2 <br />
   Arduino code as of milestone 2 <br />
   App inventor code as of milestone 2
   
