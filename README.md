@@ -1,2 +1,1 @@
-# Bluestamp
-Phone Controlled Robot Arm & Car
+# Phone Controlled Robot Arm & Car
