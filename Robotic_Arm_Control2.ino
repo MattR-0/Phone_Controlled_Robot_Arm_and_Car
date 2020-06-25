@@ -7,7 +7,7 @@ Servo wrist;
 SoftwareSerial Bluetooth(12, 11); //Assigns the HC-06 bluetooth module to its connected Arduino RX, TX pins
 int baseDef = 90, clawDef = 70, elbowDef = 70, wristDef = 90; //Sets default servo positions
 int basePPos = 90, clawPPos = 70, elbowPPos = 70, wristPPos = 90; //PPos is current servo position
-int basePos, clawPos, elbowPos, wristPos; //Pos will be used as future servo position
+int basePos = 90, clawPos = 70, elbowPos = 70, wristPos = 90; //Pos will be used as future servo position
 double speed = 1.0;
 String phoneOutput = "";
 
@@ -29,47 +29,49 @@ void setup() {
 void loop() {
   if (Bluetooth.available()) { //Detects if data is being sent over bluetooth
     phoneOutput = Bluetooth.readString(); //Reads incoming bluetooth data as a String and assigns it to phoneOutput
-    String outputN = phoneOutput.substring(1,phoneOutput.length()); //Assigns numbers sent over bluetooth to outputN (as a String)
-    switch (char n = phoneOutput.charAt(0)) {
-      case ('b'):
-        basePos = outputN.toInt(); //Sets the future base position to the position sent over bluetooth
-        changePos(basePPos,basePos,base); //Moves base from current position to future position
-        basePPos = basePos; //Updates the current base position
-        break;
-      case ('c'): //Same as above, but for the claw servo
-        clawPos = outputN.toInt();
-        changePos(clawPPos,clawPos,claw);
-        clawPPos = clawPos;
-        break;
-      case ('e'): //Same as above, but for the elbow servo
-        elbowPos = outputN.toInt();
-        changePos(elbowPPos,elbowPos,elbow);
-        elbowPPos = elbowPos;
-        break;
-      case ('w'): //Same as above, but for wrist servo
-        wristPos = outputN.toInt();
-        changePos(wristPPos,wristPos,wrist);
-        wristPPos = wristPos;
-        break;
-      case ('s'):
-        speed = 0.01*outputN.toInt(); //Sets speed to a value between .01 and 2.0
-        break;
+    if (phoneOutput.length() > 1 || phoneOutput.length() < 5) { //Checks that the incoming data is valid
+      String outputN = phoneOutput.substring(1,phoneOutput.length()); //Assigns numbers sent over bluetooth to outputN (as a String)
+      switch (char n = phoneOutput.charAt(0)) {
+        case ('b'):
+          basePos = outputN.toInt(); //Sets the future base position to the position sent over bluetooth
+          changePos(basePPos,basePos,base); //Moves base from current position to future position
+          basePPos = base.read(); //Updates the current base position
+          break;
+        case ('c'): //Same as above, but for the claw servo
+          clawPos = outputN.toInt();
+          changePos(clawPPos,clawPos,claw);
+          clawPPos = claw.read();
+          break;
+        case ('e'): //Same as above, but for the elbow servo
+          elbowPos = outputN.toInt();
+          changePos(elbowPPos,elbowPos,elbow);
+          elbowPPos = elbow.read();
+          break;
+        case ('w'): //Same as above, but for wrist servo
+          wristPos = outputN.toInt();
+          changePos(wristPPos,wristPos,wrist);
+          wristPPos = wrist.read();
+          break;
+        case ('s'):
+          speed = 0.01*outputN.toInt(); //Sets speed to a value between .01 and 2.0
+          break;
+      }
     }
   }
 }
 
 //Moves servo position to the position sent by the phone application over bluetooth, one degree at a time
-void changePos(int PPos, int Pos, Servo servo) {
+static void changePos(int PPos, int Pos, Servo servo) {
   if (PPos > Pos) {
-    for (int i = PPos; i > Pos; i--) {
+    for (int i = PPos; i >= Pos; i--) {
       servo.write(i);
-      delay((int) (40/speed));
+      delay((int) (30/speed));
     }
   }
-  if (PPos < Pos) {
-    for (int i = PPos; i < Pos; i++) {
+  else if (PPos < Pos) {
+    for (int i = PPos; i <= Pos; i++) {
       servo.write(i);
-      delay((int) (40/speed));
+      delay((int) (30/speed));
     }
   }
 }
