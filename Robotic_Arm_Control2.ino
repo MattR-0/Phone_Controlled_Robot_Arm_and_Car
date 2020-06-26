@@ -32,7 +32,7 @@ void loop() {
     String outputN, outputX;
     while (phoneOutput.indexOf(';') != -1) {
       outputN = outputX + phoneOutput.substring(0,phoneOutput.indexOf(';'));
-      phoneOutput = phoneOutput.substring(phoneOutput.indexOf(';')+1,phoneOutput.length));
+      phoneOutput = phoneOutput.substring(phoneOutput.indexOf(';')+1,phoneOutput.length());
       switch (char n = outputN.charAt(0)) {
         case ('b'):
           basePos = outputN.substring(1,outputN.length()).toInt(); //Sets the future base position to the position sent over bluetooth
