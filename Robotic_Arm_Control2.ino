@@ -29,7 +29,7 @@ void setup() {
 void loop() {
   if (Bluetooth.available()) { //Detects if data is being sent over bluetooth
     phoneOutput = Bluetooth.readString(); //Reads incoming bluetooth data as a String and assigns it to phoneOutput
-    String outputN, outputX;
+    String outputN = "", outputX = "";
     while (phoneOutput.indexOf(';') != -1) {
       outputN = outputX + phoneOutput.substring(0,phoneOutput.indexOf(';'));
       phoneOutput = phoneOutput.substring(phoneOutput.indexOf(';')+1,phoneOutput.length());
