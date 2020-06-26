@@ -29,39 +29,42 @@ void setup() {
 void loop() {
   if (Bluetooth.available()) { //Detects if data is being sent over bluetooth
     phoneOutput = Bluetooth.readString(); //Reads incoming bluetooth data as a String and assigns it to phoneOutput
-    if (phoneOutput.length() > 1 || phoneOutput.length() < 5) { //Checks that the incoming data is valid
-      String outputN = phoneOutput.substring(1,phoneOutput.length()); //Assigns numbers sent over bluetooth to outputN (as a String)
-      switch (char n = phoneOutput.charAt(0)) {
+    String outputN, outputX;
+    while (phoneOutput.indexOf(';') != -1) {
+      outputN = outputX + phoneOutput.substring(0,phoneOutput.indexOf(';'));
+      phoneOutput = phoneOutput.substring(phoneOutput.indexOf(';')+1,phoneOutput.length));
+      switch (char n = outputN.charAt(0)) {
         case ('b'):
-          basePos = outputN.toInt(); //Sets the future base position to the position sent over bluetooth
+          basePos = outputN.substring(1,outputN.length()).toInt(); //Sets the future base position to the position sent over bluetooth
           changePos(basePPos,basePos,base); //Moves base from current position to future position
           basePPos = base.read(); //Updates the current base position
           break;
         case ('c'): //Same as above, but for the claw servo
-          clawPos = outputN.toInt();
+          clawPos = outputN.substring(1,outputN.length()).toInt();
           changePos(clawPPos,clawPos,claw);
           clawPPos = claw.read();
           break;
         case ('e'): //Same as above, but for the elbow servo
-          elbowPos = outputN.toInt();
+          elbowPos = outputN.substring(1,outputN.length()).toInt();
           changePos(elbowPPos,elbowPos,elbow);
           elbowPPos = elbow.read();
           break;
         case ('w'): //Same as above, but for wrist servo
-          wristPos = outputN.toInt();
+          wristPos = outputN.substring(1,outputN.length()).toInt();
           changePos(wristPPos,wristPos,wrist);
           wristPPos = wrist.read();
           break;
         case ('s'):
-          speed = 0.01*outputN.toInt(); //Sets speed to a value between .01 and 2.0
+          speed = 0.01*outputN.substring(1,outputN.length()).toInt(); //Sets speed to a value between .01 and 2.0
           break;
       }
     }
+    outputX = phoneOutput;
   }
 }
 
 //Moves servo position to the position sent by the phone application over bluetooth, one degree at a time
-static void changePos(int PPos, int Pos, Servo servo) {
+void changePos(int PPos, int Pos, Servo servo) {
   if (PPos > Pos) {
     for (int i = PPos; i >= Pos; i--) {
       servo.write(i);
