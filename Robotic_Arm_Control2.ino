@@ -19,7 +19,6 @@ void setup() {
   claw.write(clawPPos);
   elbow.write(elbowPPos);
   wrist.write(wristPPos);
-  Serial.begin(9600);
 }
 
 //Repeatedly checks for bluetooth signals and moves the servos based on the signals
@@ -30,15 +29,13 @@ void loop() {
     while (phoneOutput.indexOf(';') != -1) { //If the data contains a semicolon
       if (phoneOutput.charAt(0) <= 122 && phoneOutput.charAt(0) >= 97) //If a new command is sent after a command was cut off
         outputX = ""; //Clears the storage to prevent the cut off command from interfering with the new one
-      outputN = outputX + phoneOutput.substring(0,phoneOutput.indexOf(';'));
-      phoneOutput = phoneOutput.substring(phoneOutput.indexOf(';')+1,phoneOutput.length());
-      Serial.println("outputN " + outputN);
+      outputN = outputX + phoneOutput.substring(0,phoneOutput.indexOf(';')); //Separates first command from list of given commands. If a command was cut in two, adds the parts together.
+      phoneOutput = phoneOutput.substring(phoneOutput.indexOf(';')+1,phoneOutput.length()); //Removes current command from list of commands
       switch (char n = outputN.charAt(0)) {
         case ('b'):
           basePos = outputN.substring(1,outputN.length()).toInt(); //Sets the future base position to the position sent over bluetooth
           changePos(basePPos,basePos,base); //Moves base from current position to future position
           basePPos = base.read(); //Updates the current base position
-          Serial.println(basePos);
           break;
         case ('c'): //Same as above, but for the claw servo
           clawPos = outputN.substring(1,outputN.length()).toInt();
@@ -60,8 +57,7 @@ void loop() {
           break;
       }
     }
-    outputX = phoneOutput;
-    Serial.println("outputX " + outputX);
+    outputX = phoneOutput; //Stores first part of a truncated command
   }
 }
 
